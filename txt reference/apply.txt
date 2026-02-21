@@ -1,0 +1,159 @@
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # module.compute.google_compute_instance.free_vm will be created
+  + resource "google_compute_instance" "free_vm" {
+      + can_ip_forward       = false
+      + cpu_platform         = (known after apply)
+      + current_status       = (known after apply)
+      + deletion_protection  = false
+      + effective_labels     = (known after apply)
+      + guest_accelerator    = (known after apply)
+      + id                   = (known after apply)
+      + instance_id          = (known after apply)
+      + label_fingerprint    = (known after apply)
+      + machine_type         = "e2-micro"
+      + metadata_fingerprint = (known after apply)
+      + min_cpu_platform     = (known after apply)
+      + name                 = "my-free-tier-vm"
+      + project              = "gcp-playground-2305"
+      + self_link            = (known after apply)
+      + tags                 = [
+          + "allow-ssh",
+        ]
+      + tags_fingerprint     = (known after apply)
+      + terraform_labels     = (known after apply)
+      + zone                 = "us-central1-f"
+
+      + boot_disk {
+          + auto_delete                = true
+          + device_name                = (known after apply)
+          + disk_encryption_key_sha256 = (known after apply)
+          + kms_key_self_link          = (known after apply)
+          + mode                       = "READ_WRITE"
+          + source                     = (known after apply)
+
+          + initialize_params {
+              + image                  = "debian-cloud/debian-12"
+              + labels                 = (known after apply)
+              + provisioned_iops       = (known after apply)
+              + provisioned_throughput = (known after apply)
+              + size                   = 30
+              + type                   = "pd-standard"
+            }
+        }
+
+      + confidential_instance_config (known after apply)
+
+      + network_interface {
+          + internal_ipv6_prefix_length = (known after apply)
+          + ipv6_access_type            = (known after apply)
+          + ipv6_address                = (known after apply)
+          + name                        = (known after apply)
+          + network                     = (known after apply)
+          + network_ip                  = (known after apply)
+          + stack_type                  = (known after apply)
+          + subnetwork                  = (known after apply)
+          + subnetwork_project          = (known after apply)
+
+          + access_config {
+              + nat_ip       = (known after apply)
+              + network_tier = (known after apply)
+            }
+        }
+
+      + reservation_affinity (known after apply)
+
+      + scheduling (known after apply)
+    }
+
+  # module.database.google_firestore_database.default_db will be created
+  + resource "google_firestore_database" "default_db" {
+      + app_engine_integration_mode       = (known after apply)
+      + concurrency_mode                  = (known after apply)
+      + create_time                       = (known after apply)
+      + delete_protection_state           = (known after apply)
+      + deletion_policy                   = "ABANDON"
+      + earliest_version_time             = (known after apply)
+      + etag                              = (known after apply)
+      + id                                = (known after apply)
+      + key_prefix                        = (known after apply)
+      + location_id                       = "nam5"
+      + name                              = "tf-code"
+      + point_in_time_recovery_enablement = "POINT_IN_TIME_RECOVERY_DISABLED"
+      + project                           = "gcp-playground-2305"
+      + type                              = "FIRESTORE_NATIVE"
+      + uid                               = (known after apply)
+      + update_time                       = (known after apply)
+      + version_retention_period          = (known after apply)
+    }
+
+  # module.network.google_compute_firewall.allow_ssh will be created
+  + resource "google_compute_firewall" "allow_ssh" {
+      + creation_timestamp = (known after apply)
+      + destination_ranges = (known after apply)
+      + direction          = (known after apply)
+      + enable_logging     = (known after apply)
+      + id                 = (known after apply)
+      + name               = "tf-audit-allow-ssh"
+      + network            = "tf-audit"
+      + priority           = 1000
+      + project            = "gcp-playground-2305"
+      + self_link          = (known after apply)
+      + source_ranges      = [
+          + "0.0.0.0/0",
+        ]
+      + target_tags        = [
+          + "allow-ssh",
+        ]
+
+      + allow {
+          + ports    = [
+              + "22",
+            ]
+          + protocol = "tcp"
+        }
+    }
+
+  # module.network.google_compute_network.custom_vpc will be created
+  + resource "google_compute_network" "custom_vpc" {
+      + auto_create_subnetworks                   = false
+      + delete_default_routes_on_create           = false
+      + gateway_ipv4                              = (known after apply)
+      + id                                        = (known after apply)
+      + internal_ipv6_range                       = (known after apply)
+      + mtu                                       = (known after apply)
+      + name                                      = "tf-audit"
+      + network_firewall_policy_enforcement_order = "AFTER_CLASSIC_FIREWALL"
+      + numeric_id                                = (known after apply)
+      + project                                   = "gcp-playground-2305"
+      + routing_mode                              = (known after apply)
+      + self_link                                 = (known after apply)
+    }
+
+  # module.network.google_compute_subnetwork.custom_subnet will be created
+  + resource "google_compute_subnetwork" "custom_subnet" {
+      + creation_timestamp         = (known after apply)
+      + external_ipv6_prefix       = (known after apply)
+      + fingerprint                = (known after apply)
+      + gateway_address            = (known after apply)
+      + id                         = (known after apply)
+      + internal_ipv6_prefix       = (known after apply)
+      + ip_cidr_range              = "10.0.1.0/24"
+      + ipv6_cidr_range            = (known after apply)
+      + name                       = "tf-audit-subnet"
+      + network                    = (known after apply)
+      + private_ip_google_access   = (known after apply)
+      + private_ipv6_google_access = (known after apply)
+      + project                    = "gcp-playground-2305"
+      + purpose                    = (known after apply)
+      + region                     = "us-central1"
+      + secondary_ip_range         = (known after apply)
+      + self_link                  = (known after apply)
+      + stack_type                 = (known after apply)
+    }
+
+Plan: 5 to add, 0 to change, 0 to destroy.
+

@@ -1,0 +1,7 @@
+#FIRESTORE DB
+resource "google_firestore_database" "default_db" {
+  project     = var.project_id
+  name        = "tf-code"
+  location_id = var.location_id
+  type        = "FIRESTORE_NATIVE"
+}
