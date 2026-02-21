@@ -1,3 +1,8 @@
+# RANDOM 4 CHAR HEX STRING
+resource "random_id" "db_suffix" {
+  byte_length = 2
+}
+
 #FIRESTORE DB
 resource "google_firestore_database" "default_db" {
   project     = var.project_id
