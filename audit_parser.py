@@ -30,9 +30,10 @@ def upload_to_gcs(bucket_name, content, action_type):
     client = storage.Client()
     bucket = client.bucket(bucket_name)
 
-    # NEW HIERARCHY: DD/MM/YYYY / Action_Type / DD-MM-YYYY_HH-MM-SS_tf_audit.txt
+    # NEW HIERARCHY: DD-MM-YYYY / Action_Type / DD-MM-YYYY_HH-MM-SS_tf_audit.txt
     now = datetime.utcnow()
-    date_folder = now.strftime("%d/%m/%Y")
+    
+    date_folder = now.strftime("%d-%m-%Y") 
     timestamp = now.strftime("%d-%m-%Y_%H-%M-%S")
     
     blob_name = f"{date_folder}/{action_type}/{timestamp}_tf_audit.txt"
