@@ -17,7 +17,7 @@ steps:
         P=$$?
         terraform apply -auto-approve tfplan -no-color 2>&1 | tee -a tf_output.txt
         A=$$?
-        apk add --no-cache python3 py3-pip >/dev/null 2>&1 && pip3 install google-cloud-storage && python3 audit_parser.py tf_output.txt gcp-playground-2305-tf-audits "Plan-and-Apply"
+        apk add --no-cache python3 py3-pip >/dev/null 2>&1 && pip3 install --break-system-packages google-cloud-storage && python3 audit_parser.py tf_output.txt gcp-playground-2305-tf-audits "Plan-and-Apply"
         [ $$P -ne 0 ] && exit $$P
         [ $$A -ne 0 ] && exit $$A
         exit 0
