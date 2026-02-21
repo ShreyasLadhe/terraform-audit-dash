@@ -1,0 +1,14 @@
+steps:
+  # 1. Initialize Terraform
+  - name: 'hashicorp/terraform:latest'
+    entrypoint: 'sh'
+    args: 
+      - '-c'
+      - 'terraform init'
+
+  # 2. Destroy the Infrastructure automatically
+  - name: 'hashicorp/terraform:latest'
+    entrypoint: 'sh'
+    args: 
+      - '-c'
+      - 'terraform destroy -auto-approve'

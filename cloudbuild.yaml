@@ -1,0 +1,21 @@
+steps:
+  # 1. Initialize Terraform
+  - name: 'hashicorp/terraform:latest'
+    entrypoint: 'sh'
+    args: 
+      - '-c'
+      - 'terraform init'
+
+  # 2. Generate a Plan
+  - name: 'hashicorp/terraform:latest'
+    entrypoint: 'sh'
+    args: 
+      - '-c'
+      - 'terraform plan -out=tfplan'
+
+  # 3. Apply the Plan automatically
+  - name: 'hashicorp/terraform:latest'
+    entrypoint: 'sh'
+    args: 
+      - '-c'
+      - 'terraform apply -auto-approve tfplan'
