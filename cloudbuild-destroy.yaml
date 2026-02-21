@@ -12,3 +12,5 @@ steps:
     args: 
       - '-c'
       - 'terraform destroy -auto-approve'
+options:
+  logging: CLOUD_LOGGING_ONLY
