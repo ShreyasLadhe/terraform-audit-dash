@@ -2,28 +2,22 @@ steps:
   # 1. Initialize Terraform
   - name: 'hashicorp/terraform:latest'
     entrypoint: 'sh'
-    args: 
+    args:
       - '-c'
       - 'terraform init'
 
-  # 2. Destroy and save output to tf_output.txt (continue so parser can upload errors)
+  # 2. Destroy + Parse (parser runs in same step so it always uploads success or failure to GCS)
   - name: 'hashicorp/terraform:latest'
     entrypoint: 'sh'
     args:
       - '-c'
-      - 'set -o pipefail; terraform destroy -auto-approve -no-color | tee tf_output.txt'
-    id: destroy
-    continueOnError: true
-
-  # 3. Parse the output and upload to GCS (Destroy or Failed)
-  - name: 'python:3.9-slim'
-    entrypoint: 'sh'
-    args:
-      - '-c'
       - |
-        pip install google-cloud-storage
-        python audit_parser.py tf_output.txt gcp-playground-2305-tf-audits "Destroy"
-    waitFor: ['destroy']
+        set +e
+        terraform destroy -auto-approve -no-color 2>&1 | tee tf_output.txt
+        D=$?
+        apk add --no-cache python3 py3-pip >/dev/null 2>&1 && pip3 install google-cloud-storage && python3 audit_parser.py tf_output.txt gcp-playground-2305-tf-audits "Destroy"
+        [ $D -ne 0 ] && exit $D
+        exit 0
 
 options:
   logging: CLOUD_LOGGING_ONLY
