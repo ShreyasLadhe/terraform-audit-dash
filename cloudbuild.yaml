@@ -6,18 +6,28 @@ steps:
       - '-c'
       - 'terraform init'
 
-  # 2. Generate a Plan
+  # 2. Generate Plan and save to tf_output.txt
   - name: 'hashicorp/terraform:latest'
     entrypoint: 'sh'
     args: 
       - '-c'
-      - 'terraform plan -out=tfplan'
+      - 'set -o pipefail; terraform plan -out=tfplan -no-color | tee tf_output.txt'
 
-  # 3. Apply the Plan automatically
+  # 3. Apply the Plan and APPEND to tf_output.txt
   - name: 'hashicorp/terraform:latest'
     entrypoint: 'sh'
     args: 
       - '-c'
-      - 'terraform apply -auto-approve tfplan'
+      - 'set -o pipefail; terraform apply -auto-approve tfplan -no-color | tee -a tf_output.txt'
+
+  # 4. Parse the combined output and upload to GCS under "Plan-and-Apply"
+  - name: 'python:3.9-slim'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        pip install google-cloud-storage
+        python audit_parser.py tf_output.txt gcp-playground-2305-tf-audits "Plan-and-Apply"
+
 options:
   logging: CLOUD_LOGGING_ONLY

@@ -6,11 +6,21 @@ steps:
       - '-c'
       - 'terraform init'
 
-  # 2. Destroy the Infrastructure automatically
+  # 2. Destroy and save output to tf_output.txt
   - name: 'hashicorp/terraform:latest'
     entrypoint: 'sh'
     args: 
       - '-c'
-      - 'terraform destroy -auto-approve'
+      - 'set -o pipefail; terraform destroy -auto-approve -no-color | tee tf_output.txt'
+
+  # 3. Parse the output and upload to GCS under "Destroy"
+  - name: 'python:3.9-slim'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        pip install google-cloud-storage
+        python audit_parser.py tf_output.txt gcp-playground-2305-tf-audits "Destroy"
+
 options:
   logging: CLOUD_LOGGING_ONLY
