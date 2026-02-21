@@ -14,9 +14,9 @@ steps:
       - |
         set +e
         terraform destroy -auto-approve -no-color 2>&1 | tee tf_output.txt
-        D=$?
+        D=$$?
         apk add --no-cache python3 py3-pip >/dev/null 2>&1 && pip3 install google-cloud-storage && python3 audit_parser.py tf_output.txt gcp-playground-2305-tf-audits "Destroy"
-        [ $D -ne 0 ] && exit $D
+        [ $$D -ne 0 ] && exit $$D
         exit 0
 
 options:
