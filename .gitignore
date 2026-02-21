@@ -13,6 +13,9 @@ crash.*.log
 *.tfvars
 *.tfvars.json
 
+# BUT allow our specific non-secret configuration file
+!terraform.tfvars
+
 # Ignore override files
 override.tf
 override.tf.json
