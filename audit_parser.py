@@ -5,9 +5,10 @@ from datetime import datetime
 from google.cloud import storage
 
 # Patterns that indicate a successful run (final outcome)
-SUCCESS_MARKERS = re.compile(
-    r"Apply complete!|Destroy complete!|No changes\."
-)
+# Note: "terraform plan" completes successfully with a "Plan:" summary line,
+# while apply/destroy complete with "Apply complete!" / "Destroy complete!".
+SUCCESS_MARKERS = re.compile(r"Apply complete!|Destroy complete!|No changes\.")
+PLAN_SUCCESS_MARKERS = re.compile(r"^Plan:|No changes\.", re.MULTILINE)
 # Patterns that indicate a failed run
 ERROR_MARKERS = re.compile(r"Error:|Error \d+:|\bError\b", re.IGNORECASE)
 
@@ -36,11 +37,20 @@ def parse_terraform_log(log_text):
     return "\n".join(output)
 
 
-def is_failed_run(log_text):
-    """Treat as failure if we see error markers or never see success markers."""
-    has_error = bool(ERROR_MARKERS.search(log_text))
-    has_success = bool(SUCCESS_MARKERS.search(log_text))
-    return has_error or not has_success
+def is_failed_run(log_text, action_type: str):
+    """Treat as failure if we see error markers or never see success markers.
+
+    Plan runs don't emit "Apply complete!" / "Destroy complete!", so we accept the
+    standard "Plan:" summary line as a success marker for Plan actions.
+    """
+    if ERROR_MARKERS.search(log_text):
+        return True
+
+    action = (action_type or "").strip().lower()
+    if action.startswith("plan"):
+        return not bool(PLAN_SUCCESS_MARKERS.search(log_text))
+
+    return not bool(SUCCESS_MARKERS.search(log_text))
 
 
 def upload_to_gcs(bucket_name, content, action_type, failed=False):
@@ -83,7 +93,7 @@ if __name__ == "__main__":
     with open(log_file, "r") as f:
         raw_log = f.read()
 
-    if is_failed_run(raw_log):
+    if is_failed_run(raw_log, action_type):
         # Upload full log to Failed/ so dashboard can show errors
         upload_to_gcs(bucket_name, raw_log, action_type, failed=True)
         sys.exit(0)
