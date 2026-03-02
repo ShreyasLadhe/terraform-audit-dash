@@ -1,0 +1,25 @@
+steps:
+  # 1. Initialize Terraform
+  - name: 'hashicorp/terraform:latest'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - 'terraform init'
+
+  # 2. Apply (auto-approve) + parse logs
+  - name: 'hashicorp/terraform:latest'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        set +e
+        terraform apply -auto-approve -no-color 2>&1 | tee tf_output.txt
+        A=$$?
+        apk add --no-cache python3 py3-pip >/dev/null 2>&1 && \
+          pip3 install --break-system-packages google-cloud-storage && \
+          python3 audit_parser.py tf_output.txt gcp-playground-2305-tf-audits "Apply"
+        [ $$A -ne 0 ] && exit $$A
+        exit 0
+
+options:
+  logging: CLOUD_LOGGING_ONLY
